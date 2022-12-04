@@ -1,0 +1,367 @@
+{
+    "config": {
+        "env": "Maze",
+        "env_type": "walls_in_tiles",
+        "start": [
+            5,
+            5
+        ],
+        "goal": [
+            [
+                10,
+                0
+            ]
+        ],
+        "file": "./maps/bitmaps/normal10b.bmp",
+        "alg": "Astar"
+    },
+    "frames": [
+        {
+            "states": [
+                {
+                    "state": [
+                        5,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.0710678118654755,
+                    "parent": null
+                }
+            ],
+            "timestamp": "2022-11-10T16:02:54.423788"
+        },
+        {
+            "states": [
+                {
+                    "state": [
+                        5,
+                        5
+                    ],
+                    "tags": [
+                        "expanded",
+                        "just-expanded"
+                    ],
+                    "value": 7.0710678118654755,
+                    "parent": null
+                },
+                {
+                    "state": [
+                        5,
+                        4
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.4031242374328485,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        6,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.4031242374328485,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        5,
+                        6
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 8.810249675906654,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        4,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 8.810249675906654,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                }
+            ],
+            "timestamp": "2022-11-10T16:02:54.451810"
+        },
+        {
+            "states": [
+                {
+                    "state": [
+                        5,
+                        5
+                    ],
+                    "tags": [
+                        "expanded"
+                    ],
+                    "value": 7.0710678118654755,
+                    "parent": null
+                },
+                {
+                    "state": [
+                        5,
+                        4
+                    ],
+                    "tags": [
+                        "expanded",
+                        "just-expanded"
+                    ],
+                    "value": 7.4031242374328485,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        6,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.4031242374328485,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        6,
+                        4
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.656854249492381,
+                    "parent": [
+                        5,
+                        4
+                    ]
+                },
+                {
+                    "state": [
+                        5,
+                        6
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 8.810249675906654,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        4,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 8.810249675906654,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        5,
+                        3
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.830951894845301,
+                    "parent": [
+                        5,
+                        4
+                    ]
+                },
+                {
+                    "state": [
+                        4,
+                        4
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 9.21110255092798,
+                    "parent": [
+                        5,
+                        4
+                    ]
+                }
+            ],
+            "timestamp": "2022-11-10T16:02:54.460792"
+        },
+        {
+            "states": [
+                {
+                    "state": [
+                        5,
+                        5
+                    ],
+                    "tags": [
+                        "expanded"
+                    ],
+                    "value": 7.0710678118654755,
+                    "parent": null
+                },
+                {
+                    "state": [
+                        5,
+                        4
+                    ],
+                    "tags": [
+                        "expanded"
+                    ],
+                    "value": 7.4031242374328485,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        6,
+                        5
+                    ],
+                    "tags": [
+                        "expanded",
+                        "just-expanded"
+                    ],
+                    "value": 7.4031242374328485,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        6,
+                        4
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.656854249492381,
+                    "parent": [
+                        6,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        5,
+                        3
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.830951894845301,
+                    "parent": [
+                        5,
+                        4
+                    ]
+                },
+                {
+                    "state": [
+                        7,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 7.830951894845301,
+                    "parent": [
+                        6,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        4,
+                        4
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 9.21110255092798,
+                    "parent": [
+                        5,
+                        4
+                    ]
+                },
+                {
+                    "state": [
+                        5,
+                        6
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 8.810249675906654,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        4,
+                        5
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 8.810249675906654,
+                    "parent": [
+                        5,
+                        5
+                    ]
+                },
+                {
+                    "state": [
+                        6,
+                        6
+                    ],
+                    "tags": [
+                        "frontier"
+                    ],
+                    "value": 9.21110255092798,
+                    "parent": [
+                        6,
+                        5
+                    ]
+                }
+            ],
+            "timestamp": "2022-11-10T16:02:54.468796"
+        }
+    ]
+}

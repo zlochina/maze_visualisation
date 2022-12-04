@@ -1,0 +1,113 @@
+The visualiser should be able to process data in the form of a JSON document 
+with grammar similar to the one below. 
+This JSON document will be produced by a computer, automatically.
+It contains WHAT can be visualized, not HOW it should be visualized.
+For info on HOW it should be visualized, see style_spec.txt.
+
+
+
+---------
+
+<json>          = {"config": <config>, 
+                   "frames": [<frame>*]}
+
+<config>        = {"env": <env>, 
+                   "env-type": <env-type>, 
+                   "file": <fpath>, 
+                   "start": <state>, 
+                   "goal": [<state>+], 
+                   "alg": <string> }
+<env>           = "Maze"
+<env-type>      = "walls_in_tiles" | "walls_between_tiles"
+<fpath>         = <string>
+<state>         = [<int>, <int>]
+
+<frame>         = {"timestamp": <timestamp>, "states": [<state-features>*], "path": [<state>+], ...}
+<state-featues> = {"state": <state>, 
+                   "tags": [<tag>*], 
+                   "parent": <state>,
+                   "value": <value>, 
+                   "q-values": <q-values>,
+                   "action": <action>,
+                  }
+<tag>           = "start" | "goal"| "expanded" | "just_expanded" | "frontier" | ...
+<value>         = <float>
+<q-values>      = [<value>, <value>, <value>, <value>]
+<action>        = "^" | "v" | "<" | ">"
+
+-----------------
+
+<json>          = {"config": <config>, "frames": [<frame>*]}
+    The JSON document is a dictionary of 2 parts, <config> and <frame>s.
+
+<config>        = {"env": <env>, "env-type": <env-type>, "start": <state>, "goal": [<state>+] }
+    <config> is a dictionary describing important info about the problem being solved and about the solver (algorithm).
+
+<env>           = "Maze"
+    <env> should describe the type of environment. We deal with mazes only, so this will always be "Maze".
+
+<env-type>      = "walls_in_tiles" | "walls_between_tiles"
+    <env-type> describes a type of maze. Visualizer should be able to handle two types of maze definitions, 
+    with "walls_in_tiles" and with "walls_between_tiles.
+
+<fpath>         = <string>
+    Path to a text/bitmap file with the definition of the maze map. Must be read for the vizualization.
+    The map reader may also want to use the <env-type> to properly read the file.
+
+<state>         = [<int>, <int>]
+    <state> is just a pair of coordinates determining the position of a tile in the maze.
+    It should be [row, column], zero-based, counter from top left.
+
+
+The more important part of the JSON document is the "frames". These contain info that should/could be visualized.
+Each <frame> basically corresponds to a state at the end of iteration of some iterative algorithm.
+
+<frame>         = {"timestamp": <timestamp>, "states": [<state-features>*], "path": [<state>+], ...}
+    Each frame is described with a dictionary containing 
+      * a timestamp
+      * list of decriptions of individual states/tiles,
+      * maybe a path that should be displayed in that frame,
+      * and possibly other things which are not clear yet.
+
+<state-features> = {"state": <state>, 
+                   "tags": [<tag>*], 
+                   "parent": <state>,
+                   "value": <value>, 
+                   "q-values": <q-values>,
+                   "action": <action>,
+                  }
+    Each frame contains a list of <state-features>. This list may contain a dictionary for each accessible tile in the maze,
+    but does not have to. It actually contains info only for those tiles where we want to visualise something.
+    For each included state, we may want to visualise certain tags, parent state, value, q-values, action, 
+    and maybe other things which are not clear right now.
+
+<tag>           = "expanded" | "just_expanded" | "frontier" | ...
+    "tags" is optional. It is a list of strings. Each string is a tag, and describes that the state/tile belong to certain group of tiles.
+    This should be used for visualization, e.g. to fill each tile from certain group with a specific color.
+
+<value>         = <float>
+    "value" is optional. <value> is usually describes how promising a state is. During visualization, it could be mapped to a color of a tile,
+    to a text inside tile, or to both.
+
+<q-values>      = [<value>, <value>, <value>, <value>]
+    "q-values" are optional. Certain algorithms compute how promising each action in each state is. Since in Maze environment we have 4 possible actions,
+    see below, we may want to visualize 4 q-values instead of 1 value. In that case, the state should be visualized like this:
+     ----
+    |\  /|
+    | \/ |
+    | /\ |
+    |/  \|
+     ----
+    Each of the four values correspond to one triangle (upper, right, bottom, left), 
+    and can be mapped to a color of that triangle, or to a text shown inside that triangle.
+
+<action>        = "^" | ">" | "v" | "<"
+    In each state, the currently best action can be visualised, maybe as an arrow pointing up, right, down, or left.
+
+
+comments
+- Why so many tags per state in Astar processed data? For now I take the first one in array
+- Tile-text argument in style.json should contain hardcoded dynamic value $Value, so we could replace it with built-in function
+- Will style.json be merged with main json file containing computed algorithm data? (will every state contain style attribute?)
+- Should I build module, that checks if json created by Student is in any way wrong? (In case i should, i could raise Errors to cmd or show it on html page)
+- Maybe not. Also i think that it is better to have color represented in hex. Ideally in format "#FFFFFF", but "FFFFFF" or "ffffff" is fine too

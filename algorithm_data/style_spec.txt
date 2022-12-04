@@ -1,0 +1,179 @@
+The visualizer should be able to visualize the individual frames from the recording.
+The frame info together with a kind of style definition should give you all the info 
+you need to display everything.
+
+This file describes HOW to visualize the recorded states of an iterative algorithm 
+applied on a Maze environment. 
+The style definition will be created by hand, or produced by some kind of GUI setup. 
+
+(The description of the recorded state info we want to visualize (WHAT) 
+can be found in recording_grammar.txt.)
+
+THIS IS A PROPOSAL OF A SPECIFICATION RATHER THAN A FINAL SPECIFICATION.
+IF YOU FIND ANY OF THE PROPOSED RULES AND BEHAVIORS STRANGE, NONSENSICAL, UNPLEASANT TO WORK WITH,
+PLEASE SUGGEST AN ALTERNATIVE!!!
+
+
+
+We should be able to attach a kind of style to the recorded information.
+Let's assume the visualiser is able to draw the maze using the tiles of the form:
+     ----
+    |\  /|
+    | \/ |
+    | /\ |
+    |/  \|
+     ----
+It should be able to
+* draw tiles in certain color,
+* place a text to center of the tile,
+* draw upper, right, bottom, and left triangles in certain color,
+* place text inside those triangles,
+* place an image/icon inside a tile,
+* draw an arrow inside a tile pointing up, right, down, or left,
+* draw a path across many tiles.
+
+The style specification should be a dictionary/JSON document like this:
+style = {
+    "tile-color": ...,
+    "tile-text": ...,
+    "triangle-color": ...,
+    "triangle-text": ...,
+    "icon": ...,
+    "arrow": ...,
+    "path": ...,
+}
+
+This style description should not specify e.g. the colors directly, but rather tell the visualiser 
+which of the stored information it should use to determine the color, and how.
+
+Example 1:
+Assume we do not want to use some of the available graphical elements in the current visualisation.
+Then we may set those fields to `None` (in Python) or `null` (in JSON):
+
+style = {
+    "tile-color": ...,
+    "tile-text": ...,
+    "triangle-color": None,
+    "triangle-text": None,
+    "icon": None,
+    "arrow": None,
+    "path": None,
+}
+
+`None`/`null` should also be the default value, it should be thus sufficient to write
+
+style = {
+    "tile-color": ...,
+    "tile-text": ...,
+}
+
+
+Example 2:
+
+Say, we want to visualize the progress of Astar algorithm. Each iteration, we stored 
+* the set of states that were already expanded in the past (tag "expanded"),
+* the state that was expanded in the current interation (tag "just_expanded"),
+* the set of states which are candidates for expansion for the next iteration (tag "frontier").
+And we basically want to draw states from each of the above groups in a different color.
+
+The style should thus tell the visualizer to use the tags to determine color,
+but it should also tell it how the color should be determined based on tag: 
+
+style = {
+    "tile-color": {
+        "tag": {
+            "expanded": <color-spec>,
+            "just_expanded": <color-spec>,
+            "frontier": <color-spec>
+        },
+    }
+}
+
+Maybe we would like to identify the start and goal states with some icons:
+
+style = {
+    ...,
+    "icon": {
+        "tag": {
+            "start": <path-to-icon-displayed-on-start-tile>,
+            "goal": <path-to-icon-displayed-on-all-goal-tiles>
+        }
+    }
+}
+
+Maybe we would like to show arrows for each state that would point to the state's parent, 
+i.e. to the neighbor whose expansion caused discovering the current state.
+
+style = {
+    ...,
+    "arrow": "parent",   
+}
+
+
+Example 3:
+
+Assume we want to visualise some kind of reinforcement learning algorithm.
+Here we probably will not have tags, but rather q-values.
+We would like to visualize them by both, the color of triangles and by the test inside triangles.
+
+style = {
+    "triangle-text": "q-value",
+    "triangle-color": {
+        "q-value": {
+            "min-value": <float>,
+            "min-color": <color-spec>,
+            "max-value": <float>,
+            "max-color": <color-spec
+        },
+    },
+}
+
+The first specification just telling the visualiser, that it should take 
+the respective q-value for that triangle, and display it as text in that triangle.
+The second specification tells the visualiser, that it should determine the triangle color 
+based on the q-value. The nested dict then prescribes how it should be done:
+  * if the q-value is lower or equal to "min-value", the color should be set to "min-color";
+  * if the q-value is higher or equal to "max-value", the color should be set to "max-color";
+  * if the q-value is between "min-value" and "max-value", the color should be interpolated between "min-color" and "max-color".
+If, for example, the q-values were limited to interval <0,1> 
+where 0 would mean "very unattractive, do not go there", 
+while 1 would mean "very attractive, try to go there",
+we may decide to encode 0 with red color, and 1 with green color:
+
+            "min-value": 0,
+            "min-color": [255, 0, 0],   # RGB triplet
+            "max-value": 1,
+            "max-color": [0, 255, 0]    # RGB triplet
+
+It may make also sense to specify "mid-value" and "mid-color", such that 
+mid-color would represent a neutral attitude, maybe using a background color.
+
+            "min-value": 0,
+            "min-color": [255, 0, 0],   # RGB triplet
+            "mid-value": 0.5,
+            "mid-color": [255, 255, 255],   # RGB triplet
+            "max-value": 1,
+            "max-color": [0, 255, 0]    # RGB triplet
+
+The same color specification can be used also for "tile-color" like 
+
+style = {
+    "tile-text": "value",
+    "tile-color": {
+        "value": {
+            "min-value": <float>,
+            "min-color": <color-spec>,
+            "max-value": <float>,
+            "max-color": <color-spec
+        },
+    },
+}
+
+The placements of the tile-text and triangle-texts inside the tiles, 
+and also the used text sizes should be determined automatically based on the tile size. 
+
+
+Summary:
+
+In the recording, you will find a set of frames. We should be able to visualize individual frames.
+Info for a frame together with the style should give you the complete info of what should be displayed and how.

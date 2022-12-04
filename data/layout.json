@@ -1,0 +1,10 @@
+{
+    "background_color": "#ffcdb2",
+    "font_color": "#6d6875",
+    "maze_details": {
+        "grid_color": "#e5ecf6",
+        "boundary_color": "#000000",
+        "start_point_color": "#0000FF",
+        "end_point_color": "#FF0000"
+    }
+}
