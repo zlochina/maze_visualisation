@@ -3,7 +3,10 @@
         "tag": {
             "expanded": "#d4a373",
             "just_expanded": "#fefae0",
-            "frontier": "#ccd5ae"
+            "frontier": "#ccd5ae",
+            "goal": "#e63946",
+            "start": "#03045e",
+            "no-tag": "#e07a5f"
         }
     },
     "tile-text": "Value: $Value",
