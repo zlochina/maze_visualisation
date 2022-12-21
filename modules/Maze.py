@@ -13,6 +13,14 @@ import time
 #    0: thick walls
 #    1: thin walls
 class Maze:
+    """A class for generating mazes.
+
+    Class Maze is a class for generating mazes and visualizing them with Plotly Express.
+    It is initialized with a number of rows and columns, an algorithm, a processed data dict,
+    type of walls, a maze style dict, a layout style dict, and an array of walls.
+    It has methods for adding a trace and an annotation, creating a tile, filling abysses within walls,
+    adding images, converting a decimal array to a hex string, and filling the maze.
+    """
     def __init__(self, m, n, algorithm, processed_data, type_of_walls, maze_style, layout_style, walls):
         # setting style specs for maze
         maze_style_details = layout_style["maze_details"]
@@ -25,7 +33,7 @@ class Maze:
 
         # setting configuration and frames data variables
         configuration = processed_data["config"]
-        frames_data = processed_data["frames"]
+        frames_data = processed_data["iterations"]
 
         start_point = configuration["start"]
         end_points = configuration["goal"]
@@ -62,11 +70,11 @@ class Maze:
         # Change line color to black #000000
         fig_template['data'][0]['line']['color'] = boundary_color
         
-        # Add start and end points
+        """# Add start and end points
         self.create_tile(fig_template, start_point[0], start_point[1], start_point_color)
 
         for end_point in end_points:
-            self.create_tile(fig_template, end_point[0], end_point[1], end_point_color)
+            self.create_tile(fig_template, end_point[0], end_point[1], end_point_color)"""
 
         # add icon to end point DEBUG
         self.add_image(fig_template, 10, 1, r"")
@@ -94,6 +102,19 @@ class Maze:
 
     @staticmethod
     def add_trace(fig, x, y, color, text, hoverinfo='text', opacity=1):
+        """Add trace to a figure.
+
+        Args:
+            fig (Plotly.figure): Figure to add a trace to.
+            x (list): x-axis values of the trace.
+            y (list): y-axis values of the trace.
+            color (str): Color of the trace.
+            text (list): Text to display when hovered over.
+            hoverinfo (str, optional): Defaults to 'text'. Specifies which type of hover info to display.
+        Returns:
+            bool: True if successful.
+        """
+
         fig.add_trace(go.Scatter(x=x, y=y,
                     fill='toself', fillcolor = color,
                     opacity = opacity,
@@ -142,7 +163,7 @@ class Maze:
         if text:
             fig.add_trace(go.Scatter(x=x, y=y,
                         fill='toself', fillcolor = color,
-                        opacity=0.7,
+                        opacity=1,
                         hoveron = 'fills',
                         text=text,
                         hoverinfo = 'text',
@@ -218,9 +239,18 @@ class Maze:
             for state in states:
                 # defininig some values for tile
                 x_i, y_i = state["state"][0], state["state"][1]
-                value = state["value"]
+
+                if "value" in state.keys():
+                    value = state["value"]
+                else:
+                    value = ""
                 text = self.maze_style["tile-text"].replace("$Value", str(value))
-                tag = state["tags"][0]
+                
+                if len(state["tags"]):
+                    tag = state["tags"][0]
+                else:
+                    tag = "no-tag"
+                
                 tile_color = self.maze_style["tile-color"]["tag"][tag]
 
                 self.create_tile(fig, x_i, y_i, tile_color, triangled=False, value=str(value), text=text)
@@ -286,5 +316,4 @@ class Maze:
         
         # Debugging
         print("Memory taken by fig is ", sys.getsizeof(fig))
-        
         return fig
