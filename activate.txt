@@ -1,7 +1,0 @@
-pwsh.exe as administrator
-
-- Activating:
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted
-
-- Deactivating:
-Set-ExecutionPolicy -ExecutionPolicy Restricted

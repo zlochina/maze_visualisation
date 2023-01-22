@@ -1,23 +1,23 @@
 {
-    "tile-color": {
-        "tag": {
-            "expanded": "#d4a373",
-            "just_expanded": "#fefae0",
-            "frontier": "#ccd5ae",
-            "goal": "#e63946",
-            "start": "#03045e",
-            "no-tag": "#e07a5f"
-        }
-    },
-    "tile-text": "Value: $Value",
-    "triangle-color": null,
-    "triangle-text": null,
-    "icon": {
-        "tag": {
-            "start": "<path-to-icon-displayed-on-start-tile>",
-            "goal": "<path-to-icon-displayed-on-all-goal-tiles>"
-        }
-    },
-    "arrow": "parent",
-    "path": null
+  "tile-color": {
+    "tag": {
+      "expanded": "#d4a373",
+      "just_expanded": "#fefae0",
+      "frontier": "#ccd5ae",
+      "goal": "#e63946",
+      "start": "#03045e",
+      "no-tag": "#e07a5f"
+    }
+  },
+  "tile-text": "Value: $Value",
+  "triangle-color": null,
+  "triangle-text": null,
+  "icon": {
+    "tag": {
+      "start": "<path-to-icon-displayed-on-start-tile>",
+      "goal": "<path-to-icon-displayed-on-all-goal-tiles>"
+    }
+  },
+  "arrow": "parent",
+  "path": null
 }
