@@ -94,8 +94,6 @@ maze = Maze(
 )
 
 
-if config.debugging:
-    print(maze.maze_array[-1])
 # frames declaration
 slides = {}
 for i in range(frames_count):
@@ -277,7 +275,6 @@ def export_file(n_clicks, chosen_export_method):
         if not walls_type:
             # reverse convert to primitive array
             prim_array = reverse_complex_converter(maze.maze_array, m, n, walls_type)
-            print(prim_array)
             # reverse convert to txt
             txt_o = reverse_primitive_converter(prim_array, 1)
         else:
@@ -315,4 +312,3 @@ def run_slider_workflow(ex_graph):
 
 if __name__ == "__main__":
     app.run_server(debug=config.debugging)
-    print(maze.maze_array)
