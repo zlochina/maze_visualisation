@@ -35,28 +35,31 @@ class Maze:
         self,
         m,
         n,
-        algorithm,
-        processed_data,
         type_of_walls,
-        maze_style,
-        layout_style,
         walls,
+        style,
     ):
         # setting style specs for maze
-        maze_style_details = layout_style["maze_details"]
+        maze_style_details = style["maze_details"]
 
         grid_color = maze_style_details["grid_color"]
         boundary_color = maze_style_details["boundary_color"]
-        background_color = layout_style["background_color"]
+        background_color = style["background_color"]
+        algorithm = style["algorithm"]
+
+        """
         # start_point_color = maze_style_details["start_point_color"]
         # end_point_color = maze_style_details["end_point_color"]
+        """
 
         # setting configuration and frames data variables
-        # configuration = processed_data["config"]
-        frames_data = processed_data["iterations"]
+        """configuration = processed_data["config"]"""
+        frames_data = style["iterations"]
 
-        # start_point = configuration["start"]
-        # end_points = configuration["goal"]
+        """
+        start_point = configuration["start"]
+        end_points = configuration["goal"]
+        """
 
         # declaring sizes of maze
         self.m = m
@@ -82,11 +85,11 @@ class Maze:
         fig_template.update_layout(paper_bgcolor=background_color)
         # change period of axes to 1 and hide titles
         fig_template.update_xaxes(
-            dtick=1, title_text="", gridcolor=grid_color
-        )  # visible=False)
+            dtick=1, title_text="", gridcolor=grid_color, visible=style["debug_mode"]
+        )
         fig_template.update_yaxes(
-            dtick=1, title_text="", gridcolor=grid_color
-        )  # visible=False)
+            dtick=1, title_text="", gridcolor=grid_color, visible=style["debug_mode"]
+        )
 
         # Change line color to black #000000
         fig_template["data"][0]["line"]["color"] = boundary_color
@@ -110,7 +113,7 @@ class Maze:
         self.frames_data = frames_data
 
         # Declaring objects style
-        self.maze_style = maze_style
+        self.maze_style = style["maze_style"]
 
         # Declaring walls of array
         self.walls = walls
@@ -123,6 +126,122 @@ class Maze:
 
         # Delay array (for run button)
         self.delay_array = []
+
+    def fill_abyss_within_walls(self, array_of_walls):
+        for y_i in range(self.m):
+            for x_i in range(self.n):
+                if array_of_walls[y_i][x_i]:
+                    self.create_tile(
+                        self.fig_template, x_i, self.m - y_i - 1, color="#000000"
+                    )
+        return 1
+
+    # Algorithms processing
+    # TODO
+    # If you want to process more unique algorithms,
+    # please write your methods here or create subclass for
+    # these methods and export your methods
+    def astar_alg_fill(self, fig, states):
+        for state in states:
+            # defininig some values for tile
+            x_i, y_i = state["state"][0], state["state"][1]
+
+            if "value" in state.keys():
+                value = state["value"]
+            else:
+                value = ""
+            text = self.maze_style["tile-text"].replace("$Value", str(value))
+
+            if len(state["tags"]):
+                tag = state["tags"][0]
+            else:
+                tag = "no-tag"
+
+            tile_color = self.maze_style["tile-color"]["tag"][tag]
+
+            self.create_tile(
+                fig,
+                x_i,
+                y_i,
+                tile_color,
+                triangled=False,
+                value=str(value),
+                text=text,
+            )
+
+    # TODO
+    # Behaivour of this function was not debugged,
+    # so in order for it to order as expected please debug it
+    # and change it for it to correspond expected format
+    # of processed data
+    def reinforcement_alg_fill(self, fig, states):
+        # Defining q-value colors range
+        q_value_color_range = self.maze_style["triangle-color"]["q-value"]
+        mid_color_exists = True if q_value_color_range.has_key("mid-color") else False
+
+        min_value = q_value_color_range["min-value"]
+        min_color = q_value_color_range["min-color"]
+        max_value = q_value_color_range["max-value"]
+        max_color = q_value_color_range["max-color"]
+        if mid_color_exists:
+            mid_value = q_value_color_range["mid-value"]
+            mid_color = q_value_color_range["mid-color"]
+
+        for state in states:
+            x_i, y_i = state["state"][0], state["state"][1]
+            q_values = state["q-values"]
+            list_of_text = [
+                self.maze_style["triangle-text"].replace("$Value", i) for i in q_values
+            ]
+            triangles_colors = []
+
+            # populate triangles_colors array
+            for q_value in q_values:
+                # convert rgb int array to hex string
+                if q_value <= min_value:
+                    triangle_color = self.decimal_arr_to_hex_str(min_color)
+
+                elif q_value >= max_value:
+                    triangle_color = self.decimal_arr_to_hex_str(max_color)
+
+                elif mid_color_exists and q_value < mid_value:
+                    rgb_array = [
+                        int((mid_color[iter] - min_color[iter]) % 256)
+                        * (q_value / mid_color)
+                        for iter in range(3)
+                    ]
+                    triangle_color = self.decimal_arr_to_hex_str(rgb_array)
+
+                elif mid_color_exists:
+                    rgb_array = [
+                        int(
+                            ((mid_color[iter] - max_color[iter]) % 256)
+                            * ((q_value - mid_value) / mid_color)
+                        )
+                        for iter in range(3)
+                    ]
+                    triangle_color = self.decimal_arr_to_hex_str(rgb_array)
+
+                else:
+                    rgb_array = [
+                        int((max_color[iter] - min_color[iter]) % 256)
+                        * (q_value / max_value)
+                        for iter in range(3)
+                    ]
+                    triangle_color = self.decimal_arr_to_hex_str(rgb_array)
+
+                # add resulting color hex string to the array
+                triangles_colors.append(triangle_color)
+
+            # create tile
+            self.create_tile(
+                fig,
+                x_i,
+                y_i,
+                color=triangles_colors,
+                triangled=True,
+                text=list_of_text,
+            )
 
     @staticmethod
     def add_trace(fig, x, y, color, text, hoverinfo="text", opacity=1):
@@ -172,6 +291,8 @@ class Maze:
 
         # add diagonals to tile if triangled
         # TODO
+        # triangled tiles weren't fully added to processing,
+        # be sure to add it
         if triangled:
             # upper triangle
             x = [x_tmp + 1, x_tmp, x_tmp + 0.5, x_tmp + 1]
@@ -226,15 +347,7 @@ class Maze:
                 )
             )
 
-    def fill_abyss_within_walls(self, array_of_walls):
-        for y_i in range(self.m):
-            for x_i in range(self.n):
-                if array_of_walls[y_i][x_i]:
-                    self.create_tile(
-                        self.fig_template, x_i, self.m - y_i - 1, color="#000000"
-                    )
-        return 1
-
+    # static methods declaration
     @staticmethod
     def add_image(fig, x, y, source):
         dict_image_settings = dict(
@@ -278,108 +391,18 @@ class Maze:
 
         if self.algorithm == algorithm_list[0]:
             # Processing Astar algorithm
-            for state in states:
-                # defininig some values for tile
-                x_i, y_i = state["state"][0], state["state"][1]
+            self.astar_alg_fill(fig, states)
 
-                if "value" in state.keys():
-                    value = state["value"]
-                else:
-                    value = ""
-                text = self.maze_style["tile-text"].replace("$Value", str(value))
-
-                if len(state["tags"]):
-                    tag = state["tags"][0]
-                else:
-                    tag = "no-tag"
-
-                tile_color = self.maze_style["tile-color"]["tag"][tag]
-
-                self.create_tile(
-                    fig,
-                    x_i,
-                    y_i,
-                    tile_color,
-                    triangled=False,
-                    value=str(value),
-                    text=text,
-                )
-        elif self.algorithm == algorithm_list[1]:
+        elif self.algorithm == "Reinforcement algorithm":
             # Processing reinforcment algorithm
-
-            # Defining q-value colors range
-            q_value_color_range = self.maze_style["triangle-color"]["q-value"]
-            mid_color_exists = (
-                True if q_value_color_range.has_key("mid-color") else False
-            )
-
-            min_value = q_value_color_range["min-value"]
-            min_color = q_value_color_range["min-color"]
-            max_value = q_value_color_range["max-value"]
-            max_color = q_value_color_range["max-color"]
-            if mid_color_exists:
-                mid_value = q_value_color_range["mid-value"]
-                mid_color = q_value_color_range["mid-color"]
-
-            for state in states:
-                x_i, y_i = state["state"][0], state["state"][1]
-                q_values = state["q-values"]
-                list_of_text = [
-                    self.maze_style["triangle-text"].replace("$Value", i)
-                    for i in q_values
-                ]
-                triangles_colors = []
-
-                # populate triangles_colors array
-                for q_value in q_values:
-                    # convert rgb int array to hex string
-                    if q_value <= min_value:
-                        triangle_color = self.decimal_arr_to_hex_str(min_color)
-
-                    elif q_value >= max_value:
-                        triangle_color = self.decimal_arr_to_hex_str(max_color)
-
-                    elif mid_color_exists and q_value < mid_value:
-                        rgb_array = [
-                            int((mid_color[iter] - min_color[iter]) % 256)
-                            * (q_value / mid_color)
-                            for iter in range(3)
-                        ]
-                        triangle_color = self.decimal_arr_to_hex_str(rgb_array)
-
-                    elif mid_color_exists:
-                        rgb_array = [
-                            int(
-                                ((mid_color[iter] - max_color[iter]) % 256)
-                                * ((q_value - mid_value) / mid_color)
-                            )
-                            for iter in range(3)
-                        ]
-                        triangle_color = self.decimal_arr_to_hex_str(rgb_array)
-
-                    else:
-                        rgb_array = [
-                            int((max_color[iter] - min_color[iter]) % 256)
-                            * (q_value / max_value)
-                            for iter in range(3)
-                        ]
-                        triangle_color = self.decimal_arr_to_hex_str(rgb_array)
-
-                    # add resulting color hex string to the array
-                    triangles_colors.append(triangle_color)
-
-                # create tile
-                self.create_tile(
-                    fig,
-                    x_i,
-                    y_i,
-                    color=triangles_colors,
-                    triangled=True,
-                    text=list_of_text,
-                )
+            # WARNING
+            # This function is expected to encounter some issues
+            self.reinforcement_alg_fill(fig, states)
 
         else:
-            raise BaseException("UndefinedAlgorithmError")
+            raise BaseException(
+                f"UndefinedAlgorithmError: processing algorithm {self.algorithm} data wasn't added"
+            )
 
         # updating delay array
         timestamp_iso = frame_data["timestamp"]
